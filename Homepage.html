@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year 2025</title>
+
+<style>
+html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    background:radial-gradient(circle at top,#120018,#000);
+    font-family:'Segoe UI',sans-serif;
+    color:white;
+    overflow:hidden;
+}
+
+canvas{position:fixed;inset:0;}
+#fireworks{z-index:1}
+
+.wrapper{
+    position:relative;
+    z-index:3;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.card{
+    width:620px;
+    min-height:340px;
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(10px);
+    border-radius:22px;
+    padding:35px;
+    display:none;
+    text-align:center;
+}
+
+.card.active{display:block;}
+
+.text{
+    font-size:20px;
+    line-height:1.9;
+    white-space:pre-line;
+}
+
+/* BUTTON */
+button{
+    margin-top:25px;
+    padding:9px 28px;
+    border:none;
+    border-radius:22px;
+    background:#ff9f43;
+    color:#000;
+    font-size:15px;
+    cursor:pointer;
+    position:relative;
+    transition:transform 0.25s;
+}
+
+/* MUSIC */
+.music-btn{
+    position:fixed;
+    bottom:18px;
+    right:18px;
+    z-index:5;
+    background:rgba(255,255,255,0.3);
+    padding:9px 16px;
+    border-radius:18px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="music-btn" onclick="playMusic()">Play Music</div>
+
+<div class="wrapper">
+
+    <!-- Page 1 -->
+    <div class="card active">
+        <div class="text">
+Shraddha,
+
+mai tumse kuch kehna chahta hu.
+        </div>
+        <button class="runaway" onclick="next()">Continue</button>
+    </div>
+
+    <!-- Page 2 -->
+    <div class="card">
+        <div class="text">
+Haan maana,
+kai baar kaha hai,
+isiliye aaj ek ye tarika bhi.
+        </div>
+        <button class="runaway" onclick="next()">Continue</button>
+    </div>
+
+    <!-- Page 3 -->
+    <div class="card">
+        <div class="text">
+Chehra tera subah ki roshni jaisa lagta hai,
+na zyada chamak, na koi dikhawa lagta hai.
+
+dekhte hi sukoon sa mil jaata hai,
+jaise har uljhan ka jawaab lagta hai.
+        </div>
+        <button class="runaway" onclick="next()">Continue</button>
+    </div>
+
+    <!-- Page 4 -->
+    <div class="card">
+        <div class="text">
+Muskurati hai jab tu dheere se,
+toh din apne aap behtar lagne lagta hai.
+
+ek muskaan mein itna asar kaise,
+yeh sawaal bas dil mein rehta hai.
+        </div>
+        <button class="runaway" onclick="next()">Continue</button>
+    </div>
+
+    <!-- Page 5 -->
+    <div class="card">
+        <div class="text">
+Aankhon mein teri gehraai si hai,
+khamoshi bhi jaise kuch keh jaati hai.
+
+nazrein mil jaaye agar ek pal ko,
+toh duniya thodi si wahi ruk jaati hai.
+        </div>
+        <button class="runaway" onclick="next()">Continue</button>
+    </div>
+
+    <!-- Page 6 -->
+    <div class="card">
+        <div class="text">
+chahe kuch bhi ho jaaye,
+I will always love you.
+        </div>
+        <button class="runaway" onclick="next()">Continue</button>
+    </div>
+
+    <!-- Page 7 -->
+    <div class="card">
+        <div class="text" id="finalText"></div>
+    </div>
+
+</div>
+
+<script>
+/* PAGE FLOW */
+let step=0;
+const cards=document.querySelectorAll(".card");
+
+function next(){
+    cards[step].classList.remove("active");
+    step++;
+    cards[step].classList.add("active");
+
+    if(step===6){
+        typeFinal();
+    }
+}
+
+/* RUN-AWAY BUTTONS (SAFE) */
+document.querySelectorAll(".runaway").forEach(btn=>{
+    btn.addEventListener("mouseenter",()=>{
+        const x=(Math.random()-0.5)*120;
+        const y=(Math.random()-0.5)*80;
+        btn.style.transform=`translate(${x}px,${y}px)`;
+    });
+});
+
+/* FINAL PAGE TYPING ONLY */
+function typeFinal(){
+    const el=document.getElementById("finalText");
+    const text="I love you,\nMy Shraddha.";
+    let i=0;
+    el.innerHTML="";
+    const t=setInterval(()=>{
+        el.innerHTML+=text.charAt(i);
+        i++;
+        if(i>=text.length) clearInterval(t);
+    },90);
+}
+
+/* FIREWORKS */
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+let rockets=[],sparks=[];
+function launch(x){
+    rockets.push({x,y:innerHeight,vy:-6});
+}
+function explode(x,y){
+    for(let i=0;i<110;i++){
+        sparks.push({
+            x,y,
+            vx:(Math.random()-0.5)*5,
+            vy:(Math.random()-0.5)*5,
+            life:70,
+            color:`hsl(${25+Math.random()*25},100%,55%)`
+        });
+    }
+}
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    rockets.forEach((r,i)=>{
+        r.y+=r.vy;
+        ctx.fillStyle="orange";
+        ctx.fillRect(r.x,r.y,2,7);
+        if(r.y<canvas.height*0.45){
+            explode(r.x,r.y);
+            rockets.splice(i,1);
+        }
+    });
+    sparks.forEach((s,i)=>{
+        s.x+=s.vx; s.y+=s.vy; s.life--;
+        ctx.fillStyle=s.color;
+        ctx.fillRect(s.x,s.y,3,3);
+        if(s.life<=0) sparks.splice(i,1);
+    });
+    requestAnimationFrame(animate);
+}
+setInterval(()=>launch(Math.random()*canvas.width),1300);
+addEventListener("click",e=>launch(e.clientX));
+animate();
+
+/* MUSIC */
+const music=new Audio("music.mp3");
+music.loop=true;
+music.volume=0.6;
+function playMusic(){
+    music.play();
+    document.querySelector(".music-btn").style.display="none";
+}
+</script>
+
+</body>
+</html>
